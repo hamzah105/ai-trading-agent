@@ -30,7 +30,7 @@
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/HamzahShoaib/ai-trading-agent.git
+git clone https://github.com/hamzah105/ai-trading-agent.git
 cd ai-trading-agent
 ```
 
@@ -94,7 +94,7 @@ To host the website on GitHub Pages:
    - **Branch**: Choose `main` (or `master`) and the folder `/website`
    - Click **Save**
 
-Your site will be live at: `https://<username>.github.io/ai-trading-agent/` (may take a minute).
+Your site will be live at: `https://hamzah105.github.io/ai-trading-agent/` (may take a minute).
 
 > **Important:** All links must be **relative** (as they are) for GitHub Pages to work correctly.
 
@@ -108,7 +108,7 @@ The project website is hosted on GitHub Pages and includes:
 - Downloadable PDF pitch deck
 - Contact information
 
-🔗 **Live Site:** https://hamzashoaib.github.io/ai-trading-agent/
+🔗 **Live Site:** https://hamzah105.github.io/ai-trading-agent/
 
 ---
 
@@ -117,7 +117,7 @@ The project website is hosted on GitHub Pages and includes:
 | Resource | Link |
 |----------|------|
 | 📄 PDF Pitch Deck | [Download Here](docs/PitchDeck.pdf) |
-| ▶️ YouTube Walkthrough | [Watch on YouTube](https://youtube.com/watch?v=YOUR_VIDEO_ID) |
+| ▶️ YouTube Walkthrough | [Watch on YouTube](https://youtu.be/KfGjBfn7Xd8) |
 
 > To update the YouTube video or PDF, replace the links in `website/index.html`.
 
@@ -138,4 +138,4 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 ---
 
-Made with ❤️ by **Hamza Shoaib**
+Made with ❤️ by **Hamzah Shoaib**
