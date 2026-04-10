@@ -1,0 +1,15 @@
+{
+  "agent_id": "2ab141fa972bf7f4",
+  "type": "TRADE_EXECUTION",
+  "timestamp": 1775158057.0429838,
+  "decision": {
+    "action": "buy",
+    "position_size": 0.12
+  },
+  "portfolio_state": {
+    "balance": 10000,
+    "pnl": 0,
+    "risk_score": 0.3
+  },
+  "hash": "7c776c236a030503"
+}

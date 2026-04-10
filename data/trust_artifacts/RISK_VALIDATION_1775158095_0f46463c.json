@@ -1,0 +1,14 @@
+{
+  "agent_id": "0efa914733bc0f65",
+  "type": "RISK_VALIDATION",
+  "timestamp": 1775158094.5018353,
+  "checks": {
+    "position_size_valid": true,
+    "stop_loss_set": true,
+    "daily_loss_check": true,
+    "circuit_breaker_monitor": true,
+    "momentum_filter": true
+  },
+  "passed": true,
+  "hash": "0f46463c709c541e"
+}

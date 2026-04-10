@@ -1,0 +1,13 @@
+{
+  "agent_id": "2ab141fa972bf7f4",
+  "type": "SIGNAL_GENERATED",
+  "timestamp": 1775158057.0429838,
+  "signal": {
+    "momentum": 1,
+    "sentiment": 0,
+    "regime": "trending",
+    "confidence": 0.72,
+    "fused": 1
+  },
+  "hash": "cdf371d48921ad49"
+}

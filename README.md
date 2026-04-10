@@ -1,141 +1,232 @@
-# 🤖 Hamza's AI Trading Agent
+# Quant / Strategy Architect Agent — Kraken Hackathon
 
-> Smart. Automated. Always Learning.
+> Full AI trading system: Signal → Strategy → Execution pipeline.
+> Three roles, one repo. Modular, secure, deterministic.
 
-[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Last Update](https://img.shields.io/badge/Last%20Update-April%202026-orange.svg)](https://github.com/HamzahShoaib/ai-trading-agent/commits/main)
-[![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-Live-brightgreen.svg)](https://hamzashoaib.github.io/ai-trading-agent/)
+## System Architecture
 
----
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     DATA LAYER (Role 3)                      │
+│                                                              │
+│  [OHLCV from Kraken API] ──► Validator ──► Cleaner           │
+│                                                              │
+│       ┌───────────┐  ┌──────────┐  ┌────────┐               │
+│       │ Momentum  │  │Sentiment │  │ Regime │  (pluggable)   │
+│       └─────┬─────┘  └────┬─────┘  └───┬────┘               │
+│             └──────┬──────┘──────┬─────┘                      │
+│                    ▼              ▼                           │
+│              ┌─────────┐  ┌────────────┐                      │
+│              │  Fusion  │  │ confidence │                      │
+│              └─────┬───┘  └────────────┘                      │
+│                    │  Fused Signal Output                       │
+├────────────────────┼───────────────────────────────────────────┤
+│              STRATEGY LAYER (Role 1)                           │
+│                                                              │
+│  ┌─────────────┐  ┌────────────┐  ┌──────────────────┐       │
+│  │ Weight Func │  │ Signal Gen │  │ Decision Engine  │       │
+│  │  f(R) → w   │  │ RSI/MACD/  │  │ Score → Action   │       │
+│  │             │  │Sentiment   │  │ + Position Size  │       │
+│  └──────┬──────┘  └────────────┘  └────────┬─────────┘       │
+│         └───────────────────────────────────┘                  │
+│                    │  Decision Output (JSON contract)           │
+├────────────────────┼───────────────────────────────────────────┤
+│              EXECUTION LAYER (Role 2)                          │
+│                                                              │
+│  ┌──────────┐  ┌───────────┐  ┌─────────┐  ┌──────────────┐  │
+│  │Validator │→ │ Executor  │→ │  State  │  │ Circuit      │  │
+│  │ 8 checks │  │DRY/P/LIVE │  │ Tracker │  │  Breaker     │  │
+│  └──────────┘  └───────────┘  └─────────┘  └──────────────┘  │
+│                                                              │
+│  Structured JSON Logging (signals, orders, errors, PnL)      │
+└──────────────────────────────────────────────────────────────┘
+```
 
-## 📌 Project Overview
+## Quick Start
 
-**Hamza's AI Trading Agent** is an intelligent, algorithmic trading system that uses machine learning to analyze market data, identify patterns, and execute trades automatically. Built for both beginners and advanced traders, it combines technical analysis with AI-driven decision-making.
-
----
-
-## ✨ Features
-
-- 📊 **Real-Time Market Analysis** — Fetches live data from major exchanges
-- 🧠 **AI-Powered Predictions** — ML models trained on historical price data
-- ⚡ **Automated Trading** — Executes buy/sell orders based on signals
-- 🔒 **Risk Management** — Built-in stop-loss, position sizing, and drawdown limits
-- 📈 **Backtesting Engine** — Test strategies against historical data before going live
-- 🌙 **Dark/Light Mode Website** — Clean, responsive pitch site with embedded resources
-
----
-
-## 🚀 Quick Start
-
-### 1. Clone the Repository
 ```bash
-git clone https://github.com/hamzah105/ai-trading-agent.git
-cd ai-trading-agent
+pip install numpy pandas python-dotenv
 ```
 
-### 2. Install Dependencies
+### Role 1 — Quant Strategy Engine
+
+```python
+from config import StrategyConfig
+from strategy_math import decide
+
+cfg = StrategyConfig(risk=0.7, risk_mode="logistic")
+decision = decide(prices, cfg=cfg)
+print(decision.to_dict())
+```
+
+### Role 2 — Execution Agent
+
+```python
+from execution.config import ExecutionConfig, ExecutionMode
+from execution.executor import ExecutionEngine
+from execution.logger import ExecutionLogger
+
+config = ExecutionConfig(mode=ExecutionMode.DRY_RUN)
+log = ExecutionLogger()
+engine = ExecutionEngine(config, log)
+result = engine.execute_order(decision.to_dict(), price=50000.0)
+```
+
+### Role 3 — Data / Signal Pipeline
+
+```python
+from signals import SignalPipeline
+
+pipeline = SignalPipeline()
+output = pipeline.process(prices, sentiment_scores=scores)
+print(output["fused"])  # {"signal": 1, "confidence": 0.68, ...}
+```
+
+## Directory Structure
+
+```
+quant-architect-agent/
+├── config.py               ← Strategy config (editable by user)
+├── strategy_math.py        ← Role 1: weights, signals, decisions
+├── signals_schema.py       ← Strict JSON output contract
+├── indicators.py           ← Technical indicators (RSI, MACD, ADX, etc.)
+├── data_feed.py            ← Kraken OHLCV fetcher (public API)
+├── backtest.py             ← Paper trading with fees, exits, metrics
+├── requirements.txt        ← numpy, pandas, python-dotenv
+│
+├── signals/                ← Role 3: Data / AI Signal Engineer
+│   ├── momentum_module.py  ← RSI + MACD + EMA momentum
+│   ├── sentiment_module.py ← PRISM API / manual sentiment
+│   ├── validator.py        ← Data validation & cleaning
+│   ├── pipeline.py         ← Full signal pipeline orchestration
+│   ├── config.py           ← Signal tuning parameters
+│   └── logger.py           ← Structured JSON logging
+│
+├── execution/              ← Role 2: Execution Agent
+│   ├── config.py           ← Execution mode, safety limits
+│   ├── validator.py        ← Pre-trade validation (8 checks)
+│   ├── executor.py         ← Core execution (DRY_RUN/PAPER/LIVE)
+│   ├── logger.py           ← Structured JSON logging
+│   └── loop.py             ← Automation polling loop
+│
+├── tests/
+│   ├── test_quant_engine.py   ← Role 1 tests (58)
+│   ├── test_execution.py      ← Role 2 tests (32)
+│   ├── test_signals.py        ← Role 3 tests (45)
+│   ├── run_backtests.py       ← Risk/mode matrix
+│   └── run_demo.py            ← Engine decisions by R value
+│
+├── data/                   ← Cached OHLCV + backtest results
+└── logs/                   ← Runtime logs
+```
+
+## Role 1 — Quant Strategy Engine
+
+**Purpose:** Mathematical trading logic. Accepts risk parameter R ∈ [0,1] and produces deterministic trading decisions.
+
+### Features
+- Risk-weighted strategy combination (Momentum + Sentiment + Risk Manager)
+- Linear and logistic weight scaling
+- Hysteresis (prevents flip-flopping)
+- Conflict detection (70% position reduction on disagreement)
+- Fail-safe: missing data → HOLD
+
+### Tests
 ```bash
-pip install -r requirements.txt
+python tests/test_quant_engine.py   # 58/58 passing
 ```
 
-### 3. Configure Your API Keys
+## Role 2 — Execution Agent
+
+**Purpose:** Safely execute strategy decisions through validation, state tracking, and order routing.
+
+### Execution Modes
+| Mode | Behavior |
+|------|----------|
+| `DRY_RUN` | Simulate only, full logging (default) |
+| `PAPER` | Sandbox with realistic fills + slippage |
+| `LIVE` | Real Kraken API — requires env vars (disabled by default) |
+
+### Safety
+- Max position size: 25%
+- Daily loss limit: 5%
+- Circuit breaker: 3 consecutive losses → halt
+- Retry with exponential backoff on failures
+- Manual reset required after circuit breaker trip
+
+### Tests
 ```bash
-cp .env.example .env
-# Edit .env and add your exchange API keys
+python tests/test_execution.py   # 32/32 passing
 ```
 
-### 4. Run the Agent
+## Role 3 — Data / AI Signal Engineer
+
+**Purpose:** Collect, process, and generate high-quality trading signals.
+
+### Pipeline Stages
+1. **Ingest** — OHLCV + Sentiment data
+2. **Validate** — NaN, outliers, range checks, OHLC consistency
+3. **Clean** — Forward-fill, outlier smoothing
+4. **Generate** — Momentum (RSI+MACD+EMA), Sentiment (PRISM/manual), Regime
+5. **Fuse** — Weighted combination with agreement bonus
+6. **Output** — Strict JSON contract for Strategy Agent
+
+### Signal Contract
+```json
+{
+  "signal": -1,
+  "confidence": 0.75,
+  "source": "momentum",
+  "details": {}
+}
+```
+
+### Tests
 ```bash
-python src/main.py
+python tests/test_signals.py   # 45/45 passing
 ```
 
-> ⚠️ **Always run in paper/simulation mode first.** Never deploy real capital without thorough backtesting.
-
----
-
-## 📁 Project Structure
+## Handoff Between Roles
 
 ```
-ai-trading-agent/
-│
-├── src/                  # Core AI Trading Agent Code
-│   ├── main.py           # Entry point
-│   ├── models/           # ML model definitions
-│   ├── strategies/       # Trading strategies
-│   └── utils/            # Helper functions
-│
-├── website/              # Project Website (Hosted on GitHub Pages)
-│   ├── index.html        # Landing page
-│   ├── css/              # Stylesheets
-│   └── js/               # Scripts
-│
-├── docs/                 # Documentation
-│   └── PitchDeck.pdf     # PDF Pitch Deck
-│
-├── assets/               # Images, logos, diagrams
-│
-├── requirements.txt      # Python dependencies
-├── .env.example          # Environment variable template
-├── .gitignore            # Ignored files
-└── README.md             # This file
+Role 3 (Signal) → Role 1 (Strategy) → Role 2 (Execution)
+
+Signal Pipeline Output:
+  {"fused": {"signal": 1, "confidence": 0.68}, ...}
+    │
+    ▼
+Strategy Engine:
+  {"decision": {"action": "buy", "position_size": 0.0821}}
+    │
+    ▼
+Execution Agent:
+  {"status": "EXECUTED", "order": {...}}
 ```
 
----
+## Security
 
-## 🚀 GitHub Pages Setup
+- No hardcoded API keys — use env vars (`PRISM_API_KEY`, `KRAKEN_API_KEY`, etc.)
+- Paper trading enforced by default
+- LIVE mode requires explicit `EXECUTION_MODE=live` env + valid keys
+- All logs are JSON-structured, timestamped, non-sensitive
+- Least-privilege design: each role only does its job
 
-To host the website on GitHub Pages:
+## Running Tests
 
-1. Go to your repository on GitHub
-2. Click **Settings** → **Pages**
-3. Under **Build and deployment**:
-   - **Source**: Select `Deploy from a branch`
-   - **Branch**: Choose `main` (or `master`) and the folder `/website`
-   - Click **Save**
+```bash
+# All roles
+python tests/test_quant_engine.py
+python tests/test_execution.py
+python tests/test_signals.py
 
-Your site will be live at: `https://hamzah105.github.io/ai-trading-agent/` (may take a minute).
+# Backtest matrix
+python tests/run_backtests.py
+python tests/run_demo.py
+```
 
-> **Important:** All links must be **relative** (as they are) for GitHub Pages to work correctly.
+## Notes for Team Handoff
 
----
-
-## 🌐 Hosted Website
-
-The project website is hosted on GitHub Pages and includes:
-- Project overview and features
-- Embedded YouTube pitch walkthrough video
-- Downloadable PDF pitch deck
-- Contact information
-
-🔗 **Live Site:** https://hamzah105.github.io/ai-trading-agent/
-
----
-
-## 🎥 Pitch Resources
-
-| Resource | Link |
-|----------|------|
-| 📄 PDF Pitch Deck | [Download Here](docs/PitchDeck.pdf) |
-| ▶️ YouTube Walkthrough | [Watch on YouTube](https://youtu.be/KfGjBfn7Xd8) |
-
-> To update the YouTube video or PDF, replace the links in `website/index.html`.
-
----
-
-## 🔐 Security Notes
-
-- 🔒 **Never commit real API keys** — use `.env` files and keep them out of version control
-- 🧪 **Test in sandbox/paper mode** before connecting to live exchanges
-- 📦 **Use virtual environments** to isolate dependencies
-- 🛡️ **Review all automated trading logic** before deploying real funds
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
-
----
-
-Made with ❤️ by **Hamzah Shoaib**
+- **Risk/Execution agents** can plug into `DecisionOutput.decision`
+- **Sentiment agents** feed scores into `signal_sentiment()`
+- **Live data** swap `generate_mock_prices()` with real OHLCV via `data_feed.py`
+- **Add a new signal:** drop into `signals/`, register in `pipeline.py`, done

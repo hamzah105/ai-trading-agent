@@ -1,0 +1,8 @@
+{
+  "agent_id": "0efa914733bc0f65",
+  "type": "REPUTATION_UPDATE",
+  "timestamp": 1775158094.5158339,
+  "reputation": 0.65,
+  "reason": "Initial trading performance",
+  "hash": "3df1fb90cf1e8bec"
+}
