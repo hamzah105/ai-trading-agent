@@ -1,0 +1,4 @@
+{"_type": "SESSION_START", "timestamp": "2026-04-09T05:12:56.067767"}
+{"_type": "DECISION", "timestamp": "2026-04-09T05:12:56.122387", "data": {"risk_level": 0.5, "weights": {"momentum": 0.2142, "sentiment": 0.165, "risk_manager": 0.6208}, "signals": {"momentum": {"direction": 0, "confidence": 0.8}, "sentiment": {"direction": 0, "confidence": 0.0}, "risk_manager": {"direction": 1, "confidence": 1.0}}, "decision": {"action": "buy", "position_size": 0.0621}, "metadata": {"conflict": false, "score": 0.3104, "confidence": 0.3961, "regime": "transitional", "paper_trading": true}}}
+{"_type": "INFO", "timestamp": "2026-04-09T05:12:56.123387", "msg": "DRY_RUN: buy 6.761332 @ $91.85", "context": {}}
+{"_type": "STATE_SNAPSHOT", "timestamp": "2026-04-09T05:12:56.124386", "data": {"balance": 9377.39, "position": 6.761332, "entry_price": 91.85, "daily_pnl": -1.61, "consecutive_losses": 0, "circuit_broken": false, "cooldown_remaining": 0, "total_trades": 0, "mode": "dry_run"}}
